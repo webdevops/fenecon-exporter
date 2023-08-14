@@ -7,7 +7,6 @@ import (
 	"os"
 	"runtime"
 
-	resty "github.com/go-resty/resty/v2"
 	flags "github.com/jessevdk/go-flags"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -23,14 +22,9 @@ var (
 	argparser *flags.Parser
 	opts      config.Opts
 
-	httpClient *resty.Client
-
 	// Git version information
 	gitCommit = "<unknown>"
 	gitTag    = "<unknown>"
-
-	// cache config
-	cacheTag = "v1"
 )
 
 func main() {
@@ -39,8 +33,6 @@ func main() {
 
 	logger.Infof("starting azure-keyvault-exporter v%s (%s; %s; by %v)", gitTag, gitCommit, runtime.Version(), Author)
 	logger.Info(string(opts.GetJson()))
-
-	httpClient = resty.New()
 
 	logger.Infof("Starting http server on %s", opts.Server.Bind)
 	startHttpServer()
