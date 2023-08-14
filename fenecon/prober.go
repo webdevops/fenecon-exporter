@@ -68,6 +68,10 @@ func (fp *FeneconProber) SetHttpAuth(username, password string) {
 
 func (fp *FeneconProber) Run(target string) {
 	fp.target = target
+	fp.logger.With(zap.String("target", target))
+
+	startTime := time.Now()
+	fp.logger.Debugf(`start probe`)
 
 	client := fp.client.SetBaseURL(
 		fmt.Sprintf(`%s/rest/channel/`, strings.TrimRight(target, "/")),
@@ -141,14 +145,21 @@ func (fp *FeneconProber) Run(target string) {
 	}()
 
 	wg.Wait()
+
+	fp.logger.Debugf(`finished probe in %v`, time.Since(startTime).String())
 }
 
 func (fp *FeneconProber) queryCommon(client *resty.Client, url string, labels prometheus.Labels, gaugeVec *prometheus.GaugeVec) {
+	startTime := time.Now()
+	fp.logger.Debugf(`start query %v`, url)
+
 	result := ResultCommon{}
 	_, err := client.R().SetContext(fp.ctx).SetResult(&result).Get(url)
 	if err != nil {
 		fp.logger.Error(err)
 	}
+
+	fp.logger.Debugf(`finished query %v in %v`, url, time.Since(startTime).String())
 
 	gaugeVec.With(labels).Set(result.Value)
 }
