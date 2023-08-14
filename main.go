@@ -31,7 +31,7 @@ func main() {
 	initArgparser()
 	initLogger()
 
-	logger.Infof("starting azure-keyvault-exporter v%s (%s; %s; by %v)", gitTag, gitCommit, runtime.Version(), Author)
+	logger.Infof("starting fenecon-exporter v%s (%s; %s; by %v)", gitTag, gitCommit, runtime.Version(), Author)
 	logger.Info(string(opts.GetJson()))
 
 	logger.Infof("Starting http server on %s", opts.Server.Bind)
