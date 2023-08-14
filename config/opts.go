@@ -14,6 +14,10 @@ type (
 		}
 
 		Fenecon struct {
+			Request struct {
+				Timeout time.Duration `long:"fenecon.request.timeout"  env:"FENECON_REQUEST_TIMEOUT"  description:"Request timeout" default:"5s"`
+			}
+
 			Auth struct {
 				Username string `long:"fenecon.auth.username"  env:"FENECON_AUTH_USERNAME"  description:"Username for fenecon login"`
 				Password string `long:"fenecon.auth.password"  env:"FENECON_AUTH_PASSWORD"  description:"Password for fenecon login" default:"user"`

@@ -20,6 +20,7 @@ const (
 func newFeneconProber(ctx context.Context, registry *prometheus.Registry, logger *zap.SugaredLogger) *fenecon.FeneconProber {
 	sp := fenecon.New(ctx, registry, logger)
 	sp.SetUserAgent(UserAgent + gitTag)
+	sp.SetTimeout(opts.Fenecon.Request.Timeout)
 	if len(opts.Fenecon.Auth.Password) >= 1 {
 		sp.SetHttpAuth(opts.Fenecon.Auth.Username, opts.Fenecon.Auth.Password)
 	}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	resty "github.com/go-resty/resty/v2"
 	"github.com/prometheus/client_golang/prometheus"
@@ -54,6 +55,10 @@ func (fp *FeneconProber) initResty() {
 
 func (fp *FeneconProber) SetUserAgent(val string) {
 	fp.client.SetHeader("User-Agent", val)
+}
+
+func (fp *FeneconProber) SetTimeout(timeout time.Duration) {
+	fp.client.SetTimeout(timeout)
 }
 
 func (fp *FeneconProber) SetHttpAuth(username, password string) {
