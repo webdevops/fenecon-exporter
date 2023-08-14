@@ -11,7 +11,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set Swap Space
         uses: pierotofy/set-swap-space@master
@@ -19,7 +19,7 @@ jobs:
           swap-size-gb: 12
 
       - name: Run Golangci lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           version: latest
           args: --print-resources-usage
@@ -35,7 +35,7 @@ jobs:
         include: []
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set Swap Space
         uses: pierotofy/set-swap-space@master
