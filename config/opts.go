@@ -20,7 +20,7 @@ type (
 
 			Auth struct {
 				Username string `long:"fenecon.auth.username"  env:"FENECON_AUTH_USERNAME"  description:"Username for fenecon login"`
-				Password string `long:"fenecon.auth.password"  env:"FENECON_AUTH_PASSWORD"  description:"Password for fenecon login" default:"user"`
+				Password string `long:"fenecon.auth.password"  env:"FENECON_AUTH_PASSWORD"  description:"Password for fenecon login" default:"user" json:"-"`
 			}
 		}
 
