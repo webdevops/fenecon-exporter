@@ -59,6 +59,7 @@ func (fp *FeneconProber) initResty() {
 		case 401:
 			return errors.New(`fenecon requires authentication or credentials are invalid`)
 		case 404:
+			// ignore non existing endpoints
 			fp.logger.Debugf(`got status 404 for url "%v"`, response.Request.URL)
 			return nil
 		case 200:
