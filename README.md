@@ -38,6 +38,9 @@ Help Options:
 
 request metrics from Fenecon system
 
-| GET parameter | Default                   | Required | Description                                |
-|---------------|---------------------------|----------|--------------------------------------------|
-| `target`      |                           | **yes**  | Url to Fenecon system, eg `http://fenecon` |
+| GET parameter | Default | Required | Type                    | Description                                |
+|---------------|---------|----------|-------------------------|--------------------------------------------|
+| `target`      |         | **yes**  | string                  | Url to Fenecon system, eg `http://fenecon` |
+| `ess`         | `0`     | no       | integer (positive only) | Number of batteries (`ess`) modules        |
+| `charger`     | `0`     | no       | integer (positive only) | Number of chargers (`charger`) modules     |
+| `meter`       | `0`     | no       | integer (positive only) | Number of meters (`meter`) modules         |

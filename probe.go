@@ -33,7 +33,7 @@ func probeFenecon(w http.ResponseWriter, r *http.Request) {
 	var (
 		err            error
 		timeoutSeconds float64
-		target         string
+		target         fenecon.FeneconProberTarget
 	)
 
 	// startTime := time.Now()
@@ -48,7 +48,43 @@ func probeFenecon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if target, err = paramsGetRequired(r.URL.Query(), "target"); err != nil {
+	// param: target
+	if val, err := paramsGetRequired(r.URL.Query(), "target"); err == nil {
+		target.Target = val
+	} else {
+		contextLogger.Warnln(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// param: meters
+	if val, err := paramsGetInt(r.URL.Query(), "meter"); err == nil {
+		if val != nil && *val >= 0 {
+			target.Meter = *val
+		}
+	} else {
+		contextLogger.Warnln(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// param: chargers
+	if val, err := paramsGetInt(r.URL.Query(), "charger"); err == nil {
+		if val != nil && *val >= 0 {
+			target.Charger = *val
+		}
+	} else {
+		contextLogger.Warnln(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// param: ess
+	if val, err := paramsGetInt(r.URL.Query(), "ess"); err == nil {
+		if val != nil && *val >= 0 {
+			target.Ess = *val
+		}
+	} else {
 		contextLogger.Warnln(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

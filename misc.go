@@ -30,3 +30,20 @@ func paramsGetRequired(params url.Values, name string) (value string, err error)
 
 	return
 }
+
+func paramsGet(params url.Values, name string) (value string) {
+	return params.Get(name)
+}
+
+func paramsGetInt(params url.Values, name string) (ret *int, err error) {
+	if val := paramsGet(params, name); val != "" {
+		if i, err := strconv.ParseInt(val, 10, 64); err == nil {
+			i := int(i)
+			return &i, nil
+		} else {
+			return nil, fmt.Errorf(`unable to parse param "%v" with value "%v" as integer: %w`, name, val, err)
+		}
+	}
+
+	return nil, nil
+}
