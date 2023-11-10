@@ -102,14 +102,18 @@ func (fp *FeneconProber) Run(target string) {
 
 	// battery
 	fp.queryCommon(&wg, client, "_sum/EssSoc", commonLabels, fp.prometheus.batteryCharge)
+	fp.queryCommon(&wg, client, "_sum/EssCapacity", commonLabels, fp.prometheus.batteryCapacity)
 	fp.queryCommon(&wg, client, "_sum/EssActivePower", commonLabels, fp.prometheus.batteryPower)
 	fp.queryCommonIfNotZero(&wg, client, "_sum/EssActiveChargeEnergy", commonLabels, fp.prometheus.batteryPowerChargeTotal)
 	fp.queryCommonIfNotZero(&wg, client, "_sum/EssActiveDischargeEnergy", commonLabels, fp.prometheus.batteryPowerDischargeTotal)
+	fp.queryCommonIfNotZero(&wg, client, "_sum/EssDcChargeEnergy", commonLabels, fp.prometheus.batteryPowerDcChargeTotal)
+	fp.queryCommonIfNotZero(&wg, client, "_sum/EssDcDischargeEnergy", commonLabels, fp.prometheus.batteryPowerDcDischargeTotal)
 	fp.queryCommon(&wg, client, "_sum/EssActivePowerL1", phase1Labels, fp.prometheus.batteryPowerPhase)
 	fp.queryCommon(&wg, client, "_sum/EssActivePowerL2", phase2Labels, fp.prometheus.batteryPowerPhase)
 	fp.queryCommon(&wg, client, "_sum/EssActivePowerL3", phase3Labels, fp.prometheus.batteryPowerPhase)
 
 	// grid
+	fp.queryCommon(&wg, client, "_sum/GridMode", commonLabels, fp.prometheus.gridMode)
 	fp.queryCommon(&wg, client, "_sum/GridActivePower", commonLabels, fp.prometheus.gridPower)
 	fp.queryCommonIfNotZero(&wg, client, "_sum/GridBuyActiveEnergy", commonLabels, fp.prometheus.gridPowerBuyTotal)
 	fp.queryCommonIfNotZero(&wg, client, "_sum/GridSellActiveEnergy", commonLabels, fp.prometheus.gridPowerSellTotal)

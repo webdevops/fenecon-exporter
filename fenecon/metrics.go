@@ -9,12 +9,16 @@ type (
 		info   *prometheus.GaugeVec
 		status *prometheus.GaugeVec
 
-		batteryCharge              *prometheus.GaugeVec
-		batteryPower               *prometheus.GaugeVec
-		batteryPowerPhase          *prometheus.GaugeVec
-		batteryPowerChargeTotal    *prometheus.GaugeVec
-		batteryPowerDischargeTotal *prometheus.GaugeVec
+		batteryCharge                *prometheus.GaugeVec
+		batteryCapacity              *prometheus.GaugeVec
+		batteryPower                 *prometheus.GaugeVec
+		batteryPowerPhase            *prometheus.GaugeVec
+		batteryPowerChargeTotal      *prometheus.GaugeVec
+		batteryPowerDischargeTotal   *prometheus.GaugeVec
+		batteryPowerDcChargeTotal    *prometheus.GaugeVec
+		batteryPowerDcDischargeTotal *prometheus.GaugeVec
 
+		gridMode           *prometheus.GaugeVec
 		gridPower          *prometheus.GaugeVec
 		gridPowerPhase     *prometheus.GaugeVec
 		gridPowerBuyTotal  *prometheus.GaugeVec
@@ -56,7 +60,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.status = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_status",
-			Help: "Fenecon status",
+			Help: "Fenecon status (0=ok, 1=info, 2=warning, 3=error; State)",
 		},
 		commonLabels,
 	)
@@ -68,16 +72,25 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.batteryCharge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_battery_charge_percent",
-			Help: "Fenecon battery charge in percent",
+			Help: "Fenecon battery charge in percent (EssSoc)",
 		},
 		commonLabels,
 	)
 	fp.registry.MustRegister(fp.prometheus.batteryCharge)
 
+	fp.prometheus.batteryCapacity = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "fenecon_battery_capacity",
+			Help: "Fenecon battery capacity in Watthours (EssCapacity)",
+		},
+		commonLabels,
+	)
+	fp.registry.MustRegister(fp.prometheus.batteryCapacity)
+
 	fp.prometheus.batteryPower = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_battery_power",
-			Help: "Fenecon battery power load in Watts",
+			Help: "Fenecon battery power load in Watts (EssActivePower)",
 		},
 		commonLabels,
 	)
@@ -86,7 +99,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.batteryPowerPhase = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_battery_power_phase",
-			Help: "Fenecon battery power load in Watts",
+			Help: "Fenecon battery power load in Watts (EssActivePowerLx)",
 		},
 		phaseLabels,
 	)
@@ -95,7 +108,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.batteryPowerChargeTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_battery_power_charge_total",
-			Help: "Fenecon battery power charge in Wattshours",
+			Help: "Fenecon battery power charge in Wattshours (EssActiveChargeEnergy)",
 		},
 		commonLabels,
 	)
@@ -104,19 +117,46 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.batteryPowerDischargeTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_battery_power_discharge_total",
-			Help: "Fenecon battery power discharge in Wattshours",
+			Help: "Fenecon battery power discharge in Wattshours (EssActiveDischargeEnergy)",
 		},
 		commonLabels,
 	)
 	fp.registry.MustRegister(fp.prometheus.batteryPowerDischargeTotal)
 
+	fp.prometheus.batteryPowerDcChargeTotal = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "fenecon_battery_power_dc_charge_total",
+			Help: "Fenecon battery power dc charge in Wattshours (EssDcChargeEnergy)",
+		},
+		commonLabels,
+	)
+	fp.registry.MustRegister(fp.prometheus.batteryPowerDcChargeTotal)
+
+	fp.prometheus.batteryPowerDcDischargeTotal = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "fenecon_battery_power_dc_discharge_total",
+			Help: "Fenecon battery power dc discharge in Wattshours (EssDcDischargeEnergy)",
+		},
+		commonLabels,
+	)
+	fp.registry.MustRegister(fp.prometheus.batteryPowerDcDischargeTotal)
+
 	// ##########################################
 	// Grid
+
+	fp.prometheus.gridMode = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "fenecon_grid_mode",
+			Help: "Fenecon grid mode (0=undefined, 1=On-Grid, 2=Off-Grid; GridActivePower)",
+		},
+		commonLabels,
+	)
+	fp.registry.MustRegister(fp.prometheus.gridMode)
 
 	fp.prometheus.gridPower = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_grid_power",
-			Help: "Fenecon grid power load in Watts",
+			Help: "Fenecon grid power load in Watts (GridActivePower)",
 		},
 		commonLabels,
 	)
@@ -125,7 +165,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.gridPowerPhase = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_grid_power_phase",
-			Help: "Fenecon grid power load in Watts",
+			Help: "Fenecon grid power load in Watts (GridActivePowerLx)",
 		},
 		phaseLabels,
 	)
@@ -134,7 +174,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.gridPowerBuyTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_grid_power_buy_total",
-			Help: "Fenecon grid power buy in Wattshours",
+			Help: "Fenecon grid power buy in Wattshours (GridBuyActiveEnergy)",
 		},
 		commonLabels,
 	)
@@ -143,7 +183,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.gridPowerSellTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_grid_power_sell_total",
-			Help: "Fenecon grid power sell in Wattshours",
+			Help: "Fenecon grid power sell in Wattshours (GridSellActiveEnergy)",
 		},
 		commonLabels,
 	)
@@ -155,7 +195,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.productionPower = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_production_power",
-			Help: "Fenecon production power load in Watts",
+			Help: "Fenecon production power load in Watts (ProductionActivePower)",
 		},
 		commonLabels,
 	)
@@ -164,7 +204,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.productionPowerPhase = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_production_power_phase",
-			Help: "Fenecon production power load in Watts",
+			Help: "Fenecon production power load in Watts (ProductionAcActivePowerLx)",
 		},
 		phaseLabels,
 	)
@@ -173,7 +213,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.productionPowerAc = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_production_power_ac",
-			Help: "Fenecon production power load in Watts",
+			Help: "Fenecon production power load in Watts (ProductionAcActivePower)",
 		},
 		commonLabels,
 	)
@@ -182,7 +222,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.productionPowerDc = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_production_power_dc",
-			Help: "Fenecon production power load in Watts",
+			Help: "Fenecon production power load in Watts (ProductionDcActualPower)",
 		},
 		commonLabels,
 	)
@@ -191,7 +231,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.productionPowerTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_production_power_total",
-			Help: "Fenecon production power load in Watthours",
+			Help: "Fenecon production power load in Watthours (ProductionActiveEnergy)",
 		},
 		commonLabels,
 	)
@@ -200,7 +240,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.productionPowerAcTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_production_power_ac_total",
-			Help: "Fenecon production power load in Watthours",
+			Help: "Fenecon production power load in Watthours (ProductionAcActiveEnergy)",
 		},
 		commonLabels,
 	)
@@ -209,7 +249,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.productionPowerDcTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_production_power_dc_total",
-			Help: "Fenecon production power load in Watthours",
+			Help: "Fenecon production power load in Watthours (ProductionDcActiveEnergy)",
 		},
 		commonLabels,
 	)
@@ -221,7 +261,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.consumptionPower = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_consumption_power",
-			Help: "Fenecon consumption power load in Watts",
+			Help: "Fenecon consumption power load in Watts (ConsumptionActivePower)",
 		},
 		commonLabels,
 	)
@@ -230,7 +270,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.consumptionPowerPhase = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_consumption_power_phase",
-			Help: "Fenecon consumption power load in Watts",
+			Help: "Fenecon consumption power load in Watts (ConsumptionActivePowerLX)",
 		},
 		phaseLabels,
 	)
@@ -239,7 +279,7 @@ func (fp *FeneconProber) initMetrics() {
 	fp.prometheus.consumptionPowerTotal = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "fenecon_consumption_power_total",
-			Help: "Fenecon consumption power load in Watts",
+			Help: "Fenecon consumption power load in Watts (ConsumptionActiveEnergy)",
 		},
 		commonLabels,
 	)
