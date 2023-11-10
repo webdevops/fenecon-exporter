@@ -34,7 +34,7 @@ func main() {
 	logger.Infof("starting fenecon-exporter v%s (%s; %s; by %v)", gitTag, gitCommit, runtime.Version(), Author)
 	logger.Info(string(opts.GetJson()))
 
-	logger.Infof("Starting http server on %s", opts.Server.Bind)
+	logger.Infof("starting http server on %s", opts.Server.Bind)
 	startHttpServer()
 }
 
