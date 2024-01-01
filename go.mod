@@ -3,7 +3,7 @@ module github.com/webdevops/fenecon-exporter
 go 1.21
 
 require (
-	github.com/go-resty/resty/v2 v2.10.0
+	github.com/go-resty/resty/v2 v2.11.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/prometheus/client_golang v1.17.0
 	github.com/remeh/sizedwaitgroup v1.0.0
