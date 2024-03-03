@@ -15,8 +15,11 @@ type (
 
 		Fenecon struct {
 			Request struct {
-				Timeout  time.Duration `long:"fenecon.request.timeout"  env:"FENECON_REQUEST_TIMEOUT"  description:"Request timeout" default:"10s"`
-				Parallel int           `long:"fenecon.request.parallel"  env:"FENECON_REQUEST_PARALLEL"  description:"Number of parallel requests" default:"10"`
+				Timeout          time.Duration `long:"fenecon.request.timeout"       env:"FENECON_REQUEST_TIMEOUT"       description:"Request timeout"              default:"10s"`
+				Parallel         int           `long:"fenecon.request.parallel"      env:"FENECON_REQUEST_PARALLEL"      description:"Number of parallel requests"  default:"3"`
+				RetryCount       int           `long:"fenecon.request.retries"       env:"FENECON_REQUEST_RETRIES"       description:"Request retries"              default:"1"`
+				RetryWaitTime    time.Duration `long:"fenecon.request.waittime"      env:"FENECON_REQUEST_WAITTIME"      description:"Request retries"              default:"2s"`
+				RetryMaxWaitTime time.Duration `long:"fenecon.request.maxwaittime"   env:"FENECON_REQUEST_MAXWAITTIME"   description:"Request retries"              default:"5s"`
 			}
 
 			Auth struct {

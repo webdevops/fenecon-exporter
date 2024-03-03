@@ -22,6 +22,11 @@ func newFeneconProber(ctx context.Context, registry *prometheus.Registry, logger
 	sp.SetUserAgent(UserAgent + gitTag)
 	sp.SetTimeout(opts.Fenecon.Request.Timeout)
 	sp.SetParallelRequests(opts.Fenecon.Request.Parallel)
+	sp.SetRetry(
+		opts.Fenecon.Request.RetryCount,
+		opts.Fenecon.Request.RetryWaitTime,
+		opts.Fenecon.Request.RetryMaxWaitTime,
+	)
 	if len(opts.Fenecon.Auth.Password) >= 1 {
 		sp.SetHttpAuth(opts.Fenecon.Auth.Username, opts.Fenecon.Auth.Password)
 	}

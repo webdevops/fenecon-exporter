@@ -79,6 +79,12 @@ func (fp *FeneconProber) SetParallelRequests(val int) {
 	fp.parallelRequests = val
 }
 
+func (fp *FeneconProber) SetRetry(retry int, waitTime, maxWaitTime time.Duration) {
+	fp.client.SetRetryCount(retry)
+	fp.client.SetRetryWaitTime(waitTime)
+	fp.client.SetRetryMaxWaitTime(maxWaitTime)
+}
+
 func (fp *FeneconProber) SetTimeout(timeout time.Duration) {
 	fp.client.SetTimeout(timeout)
 }
