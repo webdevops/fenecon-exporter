@@ -20,15 +20,15 @@ const (
 func newFeneconProber(ctx context.Context, registry *prometheus.Registry, logger *zap.SugaredLogger) *fenecon.FeneconProber {
 	sp := fenecon.New(ctx, registry, logger)
 	sp.SetUserAgent(UserAgent + gitTag)
-	sp.SetTimeout(opts.Fenecon.Request.Timeout)
-	sp.SetParallelRequests(opts.Fenecon.Request.Parallel)
+	sp.SetTimeout(Opts.Fenecon.Request.Timeout)
+	sp.SetParallelRequests(Opts.Fenecon.Request.Parallel)
 	sp.SetRetry(
-		opts.Fenecon.Request.RetryCount,
-		opts.Fenecon.Request.RetryWaitTime,
-		opts.Fenecon.Request.RetryMaxWaitTime,
+		Opts.Fenecon.Request.RetryCount,
+		Opts.Fenecon.Request.RetryWaitTime,
+		Opts.Fenecon.Request.RetryMaxWaitTime,
 	)
-	if len(opts.Fenecon.Auth.Password) >= 1 {
-		sp.SetHttpAuth(opts.Fenecon.Auth.Username, opts.Fenecon.Auth.Password)
+	if len(Opts.Fenecon.Auth.Password) >= 1 {
+		sp.SetHttpAuth(Opts.Fenecon.Auth.Username, Opts.Fenecon.Auth.Password)
 	}
 
 	return sp

@@ -20,7 +20,7 @@ const (
 
 var (
 	argparser *flags.Parser
-	opts      config.Opts
+	Opts      config.Opts
 
 	// Git version information
 	gitCommit = "<unknown>"
@@ -32,14 +32,15 @@ func main() {
 	initLogger()
 
 	logger.Infof("starting fenecon-exporter v%s (%s; %s; by %v)", gitTag, gitCommit, runtime.Version(), Author)
-	logger.Info(string(opts.GetJson()))
+	logger.Info(string(Opts.GetJson()))
+	initSystem()
 
-	logger.Infof("starting http server on %s", opts.Server.Bind)
+	logger.Infof("starting http server on %s", Opts.Server.Bind)
 	startHttpServer()
 }
 
 func initArgparser() {
-	argparser = flags.NewParser(&opts, flags.Default)
+	argparser = flags.NewParser(&Opts, flags.Default)
 	_, err := argparser.Parse()
 
 	// check if there is an parse error
@@ -77,10 +78,10 @@ func startHttpServer() {
 	mux.HandleFunc("/probe", probeFenecon)
 
 	srv := &http.Server{
-		Addr:         opts.Server.Bind,
+		Addr:         Opts.Server.Bind,
 		Handler:      mux,
-		ReadTimeout:  opts.Server.ReadTimeout,
-		WriteTimeout: opts.Server.WriteTimeout,
+		ReadTimeout:  Opts.Server.ReadTimeout,
+		WriteTimeout: Opts.Server.WriteTimeout,
 	}
 	logger.Fatal(srv.ListenAndServe())
 }
