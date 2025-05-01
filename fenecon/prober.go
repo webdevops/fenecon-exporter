@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	resty "github.com/go-resty/resty/v2"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/remeh/sizedwaitgroup"
 	"go.uber.org/zap"
+	resty "resty.dev/v3"
 )
 
 type (
@@ -49,12 +49,11 @@ func New(ctx context.Context, registry *prometheus.Registry, logger *zap.Sugared
 
 func (fp *FeneconProber) initResty() {
 	fp.client = resty.New()
-	fp.client.RetryCount = 3
-	fp.client.RetryWaitTime = 2 * time.Second
-	fp.client.RetryMaxWaitTime = 5 * time.Second
-	fp.client.AddRetryAfterErrorCondition()
-
-	fp.client.OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
+	fp.client.SetRetryCount(3)
+	fp.client.SetRetryWaitTime(2 * time.Second)
+	fp.client.SetRetryMaxWaitTime(5 * time.Second)
+	fp.client.EnableRetryDefaultConditions()
+	fp.client.AddResponseMiddleware(func(client *resty.Client, response *resty.Response) error {
 		switch statusCode := response.StatusCode(); statusCode {
 		case 401:
 			return errors.New(`fenecon requires authentication or credentials are invalid`)

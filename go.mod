@@ -5,12 +5,12 @@ go 1.24.0
 toolchain go1.24.2
 
 require (
-	github.com/go-resty/resty/v2 v2.16.5
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/prometheus/client_golang v1.22.0
 	github.com/remeh/sizedwaitgroup v1.0.0
 	github.com/webdevops/go-common v0.0.0-20250501164923-7cab87d11d0f
 	go.uber.org/zap v1.27.0
+	resty.dev/v3 v3.0.0-beta.2
 )
 
 require (
