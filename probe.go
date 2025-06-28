@@ -62,39 +62,6 @@ func probeFenecon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// param: meters
-	if val, err := paramsGetInt(r.URL.Query(), "meter"); err == nil {
-		if val != nil && *val >= 0 {
-			target.Meter = *val
-		}
-	} else {
-		contextLogger.Warnln(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// param: chargers
-	if val, err := paramsGetInt(r.URL.Query(), "charger"); err == nil {
-		if val != nil && *val >= 0 {
-			target.Charger = *val
-		}
-	} else {
-		contextLogger.Warnln(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// param: ess
-	if val, err := paramsGetInt(r.URL.Query(), "ess"); err == nil {
-		if val != nil && *val >= 0 {
-			target.Ess = *val
-		}
-	} else {
-		contextLogger.Warnln(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeoutSeconds*float64(time.Second)))
 	defer cancel()
 	r = r.WithContext(ctx)
