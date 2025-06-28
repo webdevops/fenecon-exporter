@@ -18,7 +18,7 @@ Application Options:
       --log.devel                    development mode [$LOG_DEVEL]
       --log.json                     Switch log output to json format [$LOG_JSON]
       --fenecon.request.timeout=     Request timeout (default: 10s) [$FENECON_REQUEST_TIMEOUT]
-      --fenecon.request.parallel=    Number of parallel requests (default: 3) [$FENECON_REQUEST_PARALLEL]
+      --fenecon.request.parallel=    Number of parallel requests (default: 1) [$FENECON_REQUEST_PARALLEL]
       --fenecon.request.retries=     Request retries (default: 1) [$FENECON_REQUEST_RETRIES]
       --fenecon.request.waittime=    Request retries (default: 2s) [$FENECON_REQUEST_WAITTIME]
       --fenecon.request.maxwaittime= Request retries (default: 5s) [$FENECON_REQUEST_MAXWAITTIME]
