@@ -1,11 +1,11 @@
-# Fenecon Prometheus exporter
+# Fenecon (OpenEMS) Prometheus exporter
 
 [![license](https://img.shields.io/github/license/webdevops/fenecon-exporter.svg)](https://github.com/webdevops/fenecon-exporter/blob/master/LICENSE)
 [![DockerHub](https://img.shields.io/badge/DockerHub-webdevops%2Ffenecon--exporter-blue)](https://hub.docker.com/r/webdevops/fenecon-exporter/)
 [![Quay.io](https://img.shields.io/badge/Quay.io-webdevops%2Ffenecon--exporter-blue)](https://quay.io/repository/webdevops/fenecon-exporter)
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/fenecon-exporter)](https://artifacthub.io/packages/search?repo=fenecon-exporter)
 
-Prometheus exporter for Fenecon systems
+Prometheus exporter for Fenecon systems (OpenEMS)
 
 ## Usage
 
@@ -46,6 +46,3 @@ request metrics from Fenecon system
 | GET parameter | Default | Required | Type                    | Description                                |
 |---------------|---------|----------|-------------------------|--------------------------------------------|
 | `target`      |         | **yes**  | string                  | Url to Fenecon system, eg `http://fenecon` |
-| `ess`         | `0`     | no       | integer (positive only) | Number of batteries (`ess`) modules        |
-| `charger`     | `0`     | no       | integer (positive only) | Number of chargers (`charger`) modules     |
-| `meter`       | `0`     | no       | integer (positive only) | Number of meters (`meter`) modules         |
