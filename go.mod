@@ -6,7 +6,7 @@ toolchain go1.24.2
 
 require (
 	github.com/jessevdk/go-flags v1.6.1
-	github.com/prometheus/client_golang v1.22.0
+	github.com/prometheus/client_golang v1.23.0
 	github.com/remeh/sizedwaitgroup v1.0.0
 	github.com/webdevops/go-common v0.0.0-20250617214056-2620f947754f
 	go.uber.org/zap v1.27.0
