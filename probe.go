@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"go.uber.org/zap"
+	"github.com/webdevops/go-common/log/slogger"
 
 	"github.com/webdevops/fenecon-exporter/fenecon"
 )
@@ -17,7 +18,7 @@ const (
 	DefaultTimeout = 30
 )
 
-func newFeneconProber(ctx context.Context, registry *prometheus.Registry, logger *zap.SugaredLogger) *fenecon.FeneconProber {
+func newFeneconProber(ctx context.Context, registry *prometheus.Registry, logger *slogger.Logger) *fenecon.FeneconProber {
 	sp := fenecon.New(ctx, registry, logger)
 	sp.SetUserAgent(UserAgent + gitTag)
 	sp.SetTimeout(Opts.Fenecon.Request.Timeout)
@@ -48,7 +49,7 @@ func probeFenecon(w http.ResponseWriter, r *http.Request) {
 	// If a timeout is configured via the Prometheus header, add it to the request.
 	timeoutSeconds, err = getPrometheusTimeout(r, DefaultTimeout)
 	if err != nil {
-		contextLogger.Error(err)
+		contextLogger.Error("failed to parse prometheus timeout", slog.Any("error", err))
 		http.Error(w, fmt.Sprintf("failed to parse timeout from Prometheus header: %s", err), http.StatusBadRequest)
 		return
 	}
@@ -57,7 +58,7 @@ func probeFenecon(w http.ResponseWriter, r *http.Request) {
 	if val, err := paramsGetRequired(r.URL.Query(), "target"); err == nil {
 		target.Target = val
 	} else {
-		contextLogger.Warnln(err)
+		contextLogger.Warn("failed to parse target", slog.Any("error", err))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -73,6 +74,9 @@ func probeFenecon(w http.ResponseWriter, r *http.Request) {
 	h.ServeHTTP(w, r)
 }
 
-func buildContextLoggerFromRequest(r *http.Request) *zap.SugaredLogger {
-	return logger.With(zap.String("requestPath", r.URL.Path))
+func buildContextLoggerFromRequest(req *http.Request) *slogger.Logger {
+	return logger.With(
+		slog.String("method", req.Method),
+		slog.String("url", req.URL.String()),
+	)
 }

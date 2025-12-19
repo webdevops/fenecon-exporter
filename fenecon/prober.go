@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/remeh/sizedwaitgroup"
-	"go.uber.org/zap"
+	"github.com/webdevops/go-common/log/slogger"
 	resty "resty.dev/v3"
 )
 
@@ -17,7 +18,7 @@ type (
 	FeneconProber struct {
 		ctx      context.Context
 		client   *resty.Client
-		logger   *zap.SugaredLogger
+		logger   *slogger.Logger
 		registry *prometheus.Registry
 
 		parallelRequests int
@@ -32,7 +33,7 @@ type (
 	}
 )
 
-func New(ctx context.Context, registry *prometheus.Registry, logger *zap.SugaredLogger) *FeneconProber {
+func New(ctx context.Context, registry *prometheus.Registry, logger *slogger.Logger) *FeneconProber {
 	fp := FeneconProber{}
 	fp.ctx = ctx
 	fp.registry = registry
@@ -46,17 +47,33 @@ func New(ctx context.Context, registry *prometheus.Registry, logger *zap.Sugared
 
 func (fp *FeneconProber) initResty() {
 	fp.client = resty.New()
+	fp.client.SetLogger(fp.logger)
 	fp.client.SetRetryCount(3)
 	fp.client.SetRetryWaitTime(2 * time.Second)
 	fp.client.SetRetryMaxWaitTime(5 * time.Second)
 	fp.client.EnableRetryDefaultConditions()
+
+	fp.client.AddRequestMiddleware(func(c *resty.Client, req *resty.Request) error {
+		c.Logger().(*slogger.Logger).With(
+			slog.String("method", req.Method),
+			slog.String("url", req.URL),
+		).Debugf(`sending request`)
+		return nil
+	})
 	fp.client.AddResponseMiddleware(func(client *resty.Client, response *resty.Response) error {
+		logger := fp.logger.With(
+			slog.String("method", response.Request.Method),
+			slog.String("url", response.Request.RawRequest.URL.String()),
+			slog.Int("status", response.StatusCode()),
+		)
+
+		logger.Debug("got response")
+
 		switch statusCode := response.StatusCode(); statusCode {
 		case 401:
 			return errors.New(`fenecon requires authentication or credentials are invalid`)
 		case 404:
 			// ignore non existing endpoints
-			fp.logger.Debugf(`got status 404 for url "%v"`, response.Request.URL)
 			return nil
 		case 200:
 			// all ok, proceed
@@ -92,7 +109,7 @@ func (fp *FeneconProber) SetHttpAuth(username, password string) {
 
 func (fp *FeneconProber) Run(target FeneconProberTarget) {
 	fp.target = target
-	fp.logger.With(zap.String("target", target.Target))
+	fp.logger.With(slog.String("target", target.Target))
 
 	startTime := time.Now()
 	fp.logger.Debugf(`start probe`)

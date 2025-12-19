@@ -14,22 +14,24 @@ Usage:
   fenecon-exporter [OPTIONS]
 
 Application Options:
-      --log.debug                    debug mode [$LOG_DEBUG]
-      --log.devel                    development mode [$LOG_DEVEL]
-      --log.json                     Switch log output to json format [$LOG_JSON]
-      --fenecon.request.timeout=     Request timeout (default: 10s) [$FENECON_REQUEST_TIMEOUT]
-      --fenecon.request.parallel=    Number of parallel requests (default: 1) [$FENECON_REQUEST_PARALLEL]
-      --fenecon.request.retries=     Request retries (default: 1) [$FENECON_REQUEST_RETRIES]
-      --fenecon.request.waittime=    Request retries (default: 2s) [$FENECON_REQUEST_WAITTIME]
-      --fenecon.request.maxwaittime= Request retries (default: 5s) [$FENECON_REQUEST_MAXWAITTIME]
-      --fenecon.auth.username=       Username for fenecon login [$FENECON_AUTH_USERNAME]
-      --fenecon.auth.password=       Password for fenecon login (default: user) [$FENECON_AUTH_PASSWORD]
-      --server.bind=                 Server address (default: :8080) [$SERVER_BIND]
-      --server.timeout.read=         Server read timeout (default: 5s) [$SERVER_TIMEOUT_READ]
-      --server.timeout.write=        Server write timeout (default: 60s) [$SERVER_TIMEOUT_WRITE]
+      --log.level=[trace|debug|info|warning|error] Log level (default: info) [$LOG_LEVEL]
+      --log.format=[logfmt|json]                   Log format (default: logfmt) [$LOG_FORMAT]
+      --log.source=[|short|file|full]              Show source for every log message (useful for debugging and bug reports) [$LOG_SOURCE]
+      --log.color=[|auto|yes|no]                   Enable color for logs [$LOG_COLOR]
+      --log.time                                   Show log time [$LOG_TIME]
+      --fenecon.request.timeout=                   Request timeout (default: 10s) [$FENECON_REQUEST_TIMEOUT]
+      --fenecon.request.parallel=                  Number of parallel requests (default: 1) [$FENECON_REQUEST_PARALLEL]
+      --fenecon.request.retries=                   Request retries (default: 2) [$FENECON_REQUEST_RETRIES]
+      --fenecon.request.waittime=                  Request retries (default: 2s) [$FENECON_REQUEST_WAITTIME]
+      --fenecon.request.maxwaittime=               Request retries (default: 5s) [$FENECON_REQUEST_MAXWAITTIME]
+      --fenecon.auth.username=                     Username for fenecon login [$FENECON_AUTH_USERNAME]
+      --fenecon.auth.password=                     Password for fenecon login (default: user) [$FENECON_AUTH_PASSWORD]
+      --server.bind=                               Server address (default: :8080) [$SERVER_BIND]
+      --server.timeout.read=                       Server read timeout (default: 5s) [$SERVER_TIMEOUT_READ]
+      --server.timeout.write=                      Server write timeout (default: 60s) [$SERVER_TIMEOUT_WRITE]
 
 Help Options:
-  -h, --help                         Show this help message
+  -h, --help                                       Show this help message
 ```
 
 ## HTTP Endpoints
