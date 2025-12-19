@@ -112,7 +112,7 @@ func (fp *FeneconProber) Run(target FeneconProberTarget) {
 	fp.logger.With(slog.String("target", target.Target))
 
 	startTime := time.Now()
-	fp.logger.Debugf(`start probe`)
+	fp.logger.Info(`start probe`)
 
 	client := fp.client.SetBaseURL(
 		fmt.Sprintf(`%s/rest/channel/`, strings.TrimRight(target.Target, "/")),
@@ -273,7 +273,7 @@ func (fp *FeneconProber) Run(target FeneconProberTarget) {
 
 	wg.Wait()
 
-	fp.logger.Debugf(`finished probe in %v`, time.Since(startTime).String())
+	fp.logger.Info(`finished probe`, slog.Duration("duration", time.Since(startTime)))
 }
 
 func (fp *FeneconProber) queryWildcard(client *resty.Client, url string) (*ResultWildcard, error) {
