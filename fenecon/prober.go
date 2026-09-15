@@ -2,6 +2,7 @@ package fenecon
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -51,7 +52,7 @@ func (fp *FeneconProber) initResty() {
 	fp.client.SetRetryCount(3)
 	fp.client.SetRetryWaitTime(2 * time.Second)
 	fp.client.SetRetryMaxWaitTime(5 * time.Second)
-	fp.client.EnableRetryDefaultConditions()
+	fp.client.SetRetryDefaultConditions(true)
 
 	fp.client.AddRequestMiddleware(func(c *resty.Client, req *resty.Request) error {
 		c.Logger().(*slogger.Logger).With(
@@ -103,8 +104,16 @@ func (fp *FeneconProber) SetTimeout(timeout time.Duration) {
 }
 
 func (fp *FeneconProber) SetHttpAuth(username, password string) {
-	fp.client.SetDisableWarn(true)
-	fp.client.SetBasicAuth(username, password)
+	// not using auth here, because of the warnings
+	// if you use http protocol you should be aware of the security issues
+	// most FENECON systems might be anyway just internal, hopefully
+	headerVal := fmt.Sprintf(
+		"Basic %s",
+		base64.StdEncoding.EncodeToString([]byte(
+			fmt.Sprintf("%s:%s", username, password),
+		)),
+	)
+	fp.client.SetHeaderAny("Authorization", headerVal)
 }
 
 func (fp *FeneconProber) Run(target FeneconProberTarget) {
